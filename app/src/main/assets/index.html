@@ -34,15 +34,9 @@
             gap: 10px;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
-        .ai-banner span {
-            font-size: 20px;
-        }
-        .step-section {
-            display: none;
-        }
-        .step-section.active {
-            display: block;
-        }
+        .ai-banner span { font-size: 20px; }
+        .step-section { display: none; }
+        .step-section.active { display: block; }
         h2.form-title {
             font-size: 14px;
             color: #38bdf8;
@@ -83,13 +77,8 @@
             margin-top: 10px;
             position: relative;
         }
-        .row-group {
-            display: flex;
-            gap: 10px;
-        }
-        .row-group > div {
-            flex: 1;
-        }
+        .row-group { display: flex; gap: 10px; }
+        .row-group > div { flex: 1; }
         .btn-add {
             background-color: #10b981;
             color: white;
@@ -111,11 +100,7 @@
             cursor: pointer;
             float: right;
         }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-        }
+        .btn-group { display: flex; gap: 12px; margin-top: 25px; }
         .btn-next, .btn-prev, .btn-export {
             flex: 1;
             padding: 13px;
@@ -173,18 +158,9 @@
             letter-spacing: 0.8px;
             padding-bottom: 2px;
         }
-        .res-content {
-            font-size: 13px;
-            line-height: 1.5;
-            color: #333;
-        }
-        .res-content ul {
-            margin: 0;
-            padding-left: 18px;
-        }
-        .res-content li {
-            margin-bottom: 6px;
-        }
+        .res-content { font-size: 13px; line-height: 1.5; color: #333; }
+        .res-content ul { margin: 0; padding-left: 18px; }
+        .res-content li { margin-bottom: 6px; }
         .step-indicator {
             text-align: center;
             font-size: 12px;
@@ -195,7 +171,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- PRINT MEDIA RULES --- */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; border: none !important; box-shadow: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
@@ -216,9 +191,9 @@
         </div>
 
         <div class="step-indicator" id="stepIndicator">Stage 1 of 3: Personal Credentials</div>
-        
+
         <form id="resumeForm">
-            <!-- STEP 1: Personal Details -->
+            <!-- STEP 1 -->
             <div class="step-section active" id="step1">
                 <h2 class="form-title">Personal Details</h2>
                 <label>Full Name</label>
@@ -238,7 +213,7 @@
                 </div>
             </div>
 
-            <!-- STEP 2: Objective & Structured Education -->
+            <!-- STEP 2 -->
             <div class="step-section" id="step2">
                 <h2 class="form-title">Career Objective</h2>
                 <textarea id="inputObjective" rows="3" oninput="updatePreview()"></textarea>
@@ -248,7 +223,7 @@
                     <div class="dynamic-item">
                         <label>Degree / Qualification (e.g. 10th / SSC / Intermediate)</label>
                         <input type="text" class="edu-degree" oninput="updatePreview()">
-                        
+
                         <label style="margin-top:6px;">School / College Name</label>
                         <input type="text" class="edu-school" oninput="updatePreview()">
 
@@ -272,7 +247,7 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Skills, Experience & Export -->
+            <!-- STEP 3 -->
             <div class="step-section" id="step3">
                 <h2 class="form-title">Skills & Strengths</h2>
                 <div id="skillsContainer">
@@ -292,7 +267,7 @@
             </div>
         </form>
 
-        <!-- Professional Layout Preview -->
+        <!-- Preview -->
         <div id="resumePreview" class="resume-preview">
             <div class="res-header">
                 <h1 id="prevName">FULL NAME</h1>
@@ -323,7 +298,7 @@
         function nextStep(step) {
             document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
             document.getElementById('step' + step).classList.add('active');
-            
+
             const titles = [
                 "Stage 1 of 3: Personal Credentials",
                 "Stage 2 of 3: Objective & Education",
@@ -341,18 +316,17 @@
             document.getElementById('prevObjective').innerText = document.getElementById('inputObjective').value || '';
             document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value || '';
 
-            // Structured Education list
             const eduItems = document.querySelectorAll('#educationContainer .dynamic-item');
             let eduHTML = '<ul>';
             let hasEdu = false;
-            
+
             eduItems.forEach(item => {
                 const degree = item.querySelector('.edu-degree').value.trim();
                 const school = item.querySelector('.edu-school').value.trim();
                 const marks = item.querySelector('.edu-marks').value.trim();
                 const year = item.querySelector('.edu-year').value.trim();
 
-                if(degree !== '' || school !== '' || marks !== '' || year !== '') {
+                if (degree !== '' || school !== '' || marks !== '' || year !== '') {
                     eduHTML += `<li><strong>${degree || 'Qualification'}</strong> - ${school || 'Institution'} | Marks: ${marks || '---'} | Year: ${year || '---'}</li>`;
                     hasEdu = true;
                 }
@@ -360,12 +334,11 @@
             eduHTML += '</ul>';
             document.getElementById('prevEducation').innerHTML = hasEdu ? eduHTML : '<ul><li>---</li></ul>';
 
-            // Dynamic Skills list
             const skillInputs = document.querySelectorAll('.skill-input');
             let skillHTML = '<ul>';
             let hasSkill = false;
             skillInputs.forEach(input => {
-                if(input.value.trim() !== '') {
+                if (input.value.trim() !== '') {
                     skillHTML += `<li>${input.value}</li>`;
                     hasSkill = true;
                 }
@@ -382,7 +355,7 @@
                 <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
                 <label>Degree / Qualification (e.g. 10th / SSC / Intermediate)</label>
                 <input type="text" class="edu-degree" oninput="updatePreview()">
-                
+
                 <label style="margin-top:6px;">School / College Name</label>
                 <input type="text" class="edu-school" oninput="updatePreview()">
 
@@ -502,15 +475,42 @@
 
             const bytes = new Uint8Array(pdf.length);
             for (let i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 255;
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = (v('inputName') || 'resume').replace(/\s+/g, '_') + '_Resume.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            const fname = (v('inputName') || 'resume').replace(/\s+/g, '_') + '_Resume.pdf';
+            savePDF(new Blob([bytes], { type: 'application/pdf' }), fname);
+        }
+
+        async function savePDF(blob, fname) {
+            // 1. Share sheet (Save to Files / Drive / WhatsApp)
+            try {
+                const file = new File([blob], fname, { type: 'application/pdf' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: fname });
+                    return;
+                }
+            } catch (e) { if (e.name === 'AbortError') return; }
+
+            // 2. Normal download
+            try {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = fname;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+            } catch (e) {}
+
+            // 3. Fallback link on screen
+            const r = new FileReader();
+            r.onload = () => {
+                let box = document.getElementById('pdfFallback');
+                if (!box) {
+                    box = document.createElement('div');
+                    box.id = 'pdfFallback';
+                    box.style.cssText = 'margin-top:12px;padding:12px;border:1px solid #38bdf8;border-radius:8px;font-size:13px';
+                    document.getElementById('step3').appendChild(box);
+                }
+                box.innerHTML = 'Download start avvakapothe: <a style="color:#38bdf8" download="' + fname + '" href="' + r.result + '">ikkada tap cheyandi</a>';
+            };
+            r.readAsDataURL(blob);
         }
     </script>
 
