@@ -188,7 +188,7 @@
             letter-spacing: 1px;
         }
 
-        /* --- OFFLINE PRINT MEDIA RULES: HIDE FORM, SHOW ONLY RESUME --- */
+        /* --- PRINT MEDIA RULES: HIDE FORM, SHOW ONLY RESUME --- */
         @media print {
             body {
                 background: white !important;
@@ -223,8 +223,8 @@
         <div class="ai-banner">
             <span>✨</span>
             <div>
-                <strong>JJ AI Assistant (100% Offline Ready)</strong><br>
-                <span style="font-size: 12px; opacity: 0.9;">No internet required. Works fully offline on device.</span>
+                <strong>JJ AI Assistant (Universal Export)</strong><br>
+                <span style="font-size: 12px; opacity: 0.9;">Multi-step responsive resume generator.</span>
             </div>
         </div>
 
@@ -285,7 +285,7 @@
                 <textarea id="inputExperience" rows="2" oninput="updatePreview()"></textarea>
 
                 <div class="btn-group" style="flex-direction: column;">
-                    <button type="button" class="btn-export" onclick="exportPDF()">⚡ Export Professional PDF (Offline)</button>
+                    <button type="button" class="btn-export" onclick="exportPDF()">⚡ Export Professional PDF</button>
                     <button type="button" class="btn-prev" onclick="nextStep(2)" style="margin-top: 10px;">⬅ Back</button>
                 </div>
             </div>
@@ -389,8 +389,11 @@
         }
 
         function exportPDF() {
-            // Triggers offline native print/save-as-PDF dialog automatically on device
-            window.print();
+            try {
+                window.print();
+            } catch (err) {
+                alert("To save as PDF on mobile, tap browser menu (3 dots) -> Share -> Print.");
+            }
         }
     </script>
 
