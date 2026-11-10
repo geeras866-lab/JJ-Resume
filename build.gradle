@@ -1,9 +1,1 @@
-buildscript {
-    dependencies {
-        classpath "com.android.tools.build:gradle:8.1.1"
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+// Empty root build file for modern Gradle
