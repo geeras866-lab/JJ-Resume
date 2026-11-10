@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ AI Resume Builder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            margin: 0;
+            padding: 16px;
+            color: #f8fafc;
+        }
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+        .ai-banner {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .ai-banner span {
+            font-size: 20px;
+        }
+        .step-section {
+            display: none;
+        }
+        .step-section.active {
+            display: block;
+        }
+        h2.form-title {
+            font-size: 14px;
+            color: #38bdf8;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 6px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 5px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 13px;
+            background: #0f172a;
+            color: white;
+        }
+        input:focus, textarea:focus {
+            border-color: #38bdf8;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        .dynamic-item {
+            background: #0f172a;
+            padding: 12px;
+            border: 1px dashed #475569;
+            border-radius: 8px;
+            margin-top: 10px;
+            position: relative;
+        }
+        .btn-add {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn-remove {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+        .btn-next, .btn-prev, .btn-export {
+            flex: 1;
+            padding: 13px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-next { background-color: #3b82f6; color: white; }
+        .btn-prev { background-color: #475569; color: white; }
+        .btn-export { background: linear-gradient(135deg, #10b981, #059669); color: white; width: 100%; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+        /* --- CORPORATE RESUME PREVIEW TEMPLATE --- */
+        .resume-preview {
+            margin-top: 35px;
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 40px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .res-header {
+            text-align: left;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .res-header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            letter-spacing: 1px;
+        }
+        .res-contact-info {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #555;
+            font-weight: 500;
+        }
+        .res-section-title {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1.5px solid #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            letter-spacing: 0.8px;
+            padding-bottom: 2px;
+        }
+        .res-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .res-content ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .res-content li {
+            margin-bottom: 4px;
+        }
+        .step-indicator {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- OFFLINE PRINT MEDIA RULES: HIDE FORM, SHOW ONLY RESUME --- */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .container {
+                background: white !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+            .container > *:not(#resumePreview) {
+                display: none !important;
+            }
+            .resume-preview {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- AI Assistant Banner -->
+        <div class="ai-banner">
+            <span>✨</span>
+            <div>
+                <strong>JJ AI Assistant (100% Offline Ready)</strong><br>
+                <span style="font-size: 12px; opacity: 0.9;">No internet required. Works fully offline on device.</span>
+            </div>
+        </div>
+
+        <div class="step-indicator" id="stepIndicator">Stage 1 of 3: Personal Credentials</div>
+        
+        <form id="resumeForm">
+            <!-- STEP 1: Personal Details -->
+            <div class="step-section active" id="step1">
+                <h2 class="form-title">Personal Details</h2>
+                <label>Full Name</label>
+                <input type="text" id="inputName" oninput="updatePreview()">
+
+                <label>Phone Number</label>
+                <input type="tel" id="inputPhone" oninput="updatePreview()">
+
+                <label>Email Address</label>
+                <input type="email" id="inputEmail" oninput="updatePreview()">
+
+                <label>Address</label>
+                <textarea id="inputAddress" rows="2" oninput="updatePreview()"></textarea>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-next" onclick="nextStep(2)">Proceed Next ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Objective & Education -->
+            <div class="step-section" id="step2">
+                <h2 class="form-title">Career Objective</h2>
+                <textarea id="inputObjective" rows="3" oninput="updatePreview()"></textarea>
+
+                <h2 class="form-title">Education Details</h2>
+                <div id="educationContainer">
+                    <div class="dynamic-item">
+                        <label>Qualification / School / College & Marks</label>
+                        <input type="text" class="edu-input" oninput="updatePreview()">
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addEducation()">+ Add Another Qualification</button>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-prev" onclick="nextStep(1)">⬅ Back</button>
+                    <button type="button" class="btn-next" onclick="nextStep(3)">Proceed Next ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Skills, Experience & Export -->
+            <div class="step-section" id="step3">
+                <h2 class="form-title">Skills & Strengths</h2>
+                <div id="skillsContainer">
+                    <div class="dynamic-item">
+                        <input type="text" class="skill-input" oninput="updatePreview()">
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addSkill()">+ Add Skill</button>
+
+                <h2 class="form-title">Experience / Work Details</h2>
+                <textarea id="inputExperience" rows="2" oninput="updatePreview()"></textarea>
+
+                <div class="btn-group" style="flex-direction: column;">
+                    <button type="button" class="btn-export" onclick="exportPDF()">⚡ Export Professional PDF (Offline)</button>
+                    <button type="button" class="btn-prev" onclick="nextStep(2)" style="margin-top: 10px;">⬅ Back</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Professional Layout Preview -->
+        <div id="resumePreview" class="resume-preview">
+            <div class="res-header">
+                <h1 id="prevName">FULL NAME</h1>
+                <div class="res-contact-info">
+                    Phone: <span id="prevPhone">---</span> &nbsp;|&nbsp; Email: <span id="prevEmail">---</span> &nbsp;|&nbsp; Address: <span id="prevAddress">---</span>
+                </div>
+            </div>
+
+            <div class="res-section-title">Career Objective</div>
+            <div class="res-content" id="prevObjective">Write your career objective...</div>
+
+            <div class="res-section-title">Education</div>
+            <div class="res-content" id="prevEducation">
+                <ul><li>Add your educational details...</li></ul>
+            </div>
+
+            <div class="res-section-title">Skills & Strengths</div>
+            <div class="res-content" id="prevSkills">
+                <ul><li>Add your skills...</li></ul>
+            </div>
+
+            <div class="res-section-title">Experience</div>
+            <div class="res-content" id="prevExperience">Fresher / Work details...</div>
+        </div>
+    </div>
+
+    <script>
+        function nextStep(step) {
+            document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            const titles = [
+                "Stage 1 of 3: Personal Credentials",
+                "Stage 2 of 3: Objective & Education",
+                "Stage 3 of 3: Skills & Export PDF"
+            ];
+            document.getElementById('stepIndicator').innerText = titles[step - 1];
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updatePreview() {
+            document.getElementById('prevName').innerText = (document.getElementById('inputName').value || 'YOUR NAME').toUpperCase();
+            document.getElementById('prevPhone').innerText = document.getElementById('inputPhone').value || '---';
+            document.getElementById('prevEmail').innerText = document.getElementById('inputEmail').value || '---';
+            document.getElementById('prevAddress').innerText = document.getElementById('inputAddress').value || '---';
+            document.getElementById('prevObjective').innerText = document.getElementById('inputObjective').value || '';
+            document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value || '';
+
+            const eduInputs = document.querySelectorAll('.edu-input');
+            let eduHTML = '<ul>';
+            let hasEdu = false;
+            eduInputs.forEach(input => {
+                if(input.value.trim() !== '') {
+                    eduHTML += `<li>${input.value}</li>`;
+                    hasEdu = true;
+                }
+            });
+            eduHTML += '</ul>';
+            document.getElementById('prevEducation').innerHTML = hasEdu ? eduHTML : '<ul><li>---</li></ul>';
+
+            const skillInputs = document.querySelectorAll('.skill-input');
+            let skillHTML = '<ul>';
+            let hasSkill = false;
+            skillInputs.forEach(input => {
+                if(input.value.trim() !== '') {
+                    skillHTML += `<li>${input.value}</li>`;
+                    hasSkill = true;
+                }
+            });
+            skillHTML += '</ul>';
+            document.getElementById('prevSkills').innerHTML = hasSkill ? skillHTML : '<ul><li>---</li></ul>';
+        }
+
+        function addEducation() {
+            const container = document.getElementById('educationContainer');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item';
+            div.innerHTML = `
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
+                <label>Qualification / School / College & Marks</label>
+                <input type="text" class="edu-input" oninput="updatePreview()">
+            `;
+            container.appendChild(div);
+        }
+
+        function addSkill() {
+            const container = document.getElementById('skillsContainer');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item';
+            div.innerHTML = `
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
+                <input type="text" class="skill-input" oninput="updatePreview()">
+            `;
+            container.appendChild(div);
+        }
+
+        function exportPDF() {
+            // Triggers offline native print/save-as-PDF dialog automatically on device
+            window.print();
+        }
+    </script>
+
+</body>
+</html>
