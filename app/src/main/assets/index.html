@@ -13,7 +13,7 @@
             color: #333;
         }
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             background: #ffffff;
             padding: 20px;
@@ -21,51 +21,51 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h2 {
-            font-size: 18px;
+            font-size: 16px;
             color: #1a73e8;
             border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
             margin-top: 20px;
         }
         label {
             display: block;
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 13px;
             font-weight: bold;
         }
         input, textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
+            padding: 8px;
+            margin-top: 4px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 13px;
         }
         .dynamic-item {
             background: #fafafa;
-            padding: 10px;
+            padding: 8px;
             border: 1px dashed #ccc;
             border-radius: 4px;
-            margin-top: 10px;
+            margin-top: 8px;
             position: relative;
         }
         .btn-add {
             background-color: #34a853;
             color: white;
             border: none;
-            padding: 8px 12px;
-            font-size: 14px;
+            padding: 6px 10px;
+            font-size: 12px;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 6px;
         }
         .btn-remove {
             background-color: #ea4335;
             color: white;
             border: none;
-            padding: 4px 8px;
-            font-size: 12px;
+            padding: 3px 6px;
+            font-size: 11px;
             border-radius: 4px;
             cursor: pointer;
             float: right;
@@ -76,44 +76,101 @@
             color: white;
             border: none;
             padding: 12px;
-            font-size: 16px;
+            font-size: 15px;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 24px;
         }
+
+        /* Resume Preview Box Styles */
+        .resume-preview {
+            margin-top: 30px;
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .res-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .res-header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        .res-header p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: #555;
+        }
+        .res-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #999;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            color: #1a73e8;
+        }
+        .res-content {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Print styling: Only print the resume preview layout as A4 PDF */
         @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; padding: 0; max-width: 100%; }
-            button, .btn-add, .btn-remove { display: none; }
-            input, textarea { border: none; border-bottom: 1px solid #000; padding: 4px 0; background: transparent; }
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container > *:not(#resumePreview) {
+                display: none !important;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+                margin: 0;
+            }
+            .resume-preview {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <h2 style="margin-top:0; color:#333; text-align:center;">JJ Resume Builder Form</h2>
+        
         <form id="resumeForm">
             <h2>Personal Details</h2>
             <label>Full Name</label>
-            <input type="text" placeholder="Enter your full name">
+            <input type="text" id="inputName" oninput="updatePreview()" placeholder="">
 
             <label>Phone Number</label>
-            <input type="tel" placeholder="Enter phone number">
+            <input type="tel" id="inputPhone" oninput="updatePreview()" placeholder="">
 
             <label>Email Address</label>
-            <input type="email" placeholder="Enter email address">
+            <input type="email" id="inputEmail" oninput="updatePreview()" placeholder="">
 
             <label>Address</label>
-            <textarea rows="2" placeholder="Enter your address"></textarea>
+            <textarea id="inputAddress" rows="2" oninput="updatePreview()" placeholder=""></textarea>
 
             <h2>Career Objective</h2>
-            <textarea rows="3" placeholder="Write your career objective..."></textarea>
+            <textarea id="inputObjective" rows="2" oninput="updatePreview()" placeholder=""></textarea>
 
-            <h2>Education Details (Add only what you completed)</h2>
+            <h2>Education Details</h2>
             <div id="educationContainer">
                 <div class="dynamic-item">
                     <label>Qualification / School / College & Marks</label>
-                    <input type="text" placeholder="e.g. 10th Class / SSC - 80% or Intermediate - 85%">
+                    <input type="text" class="edu-input" oninput="updatePreview()">
                 </div>
             </div>
             <button type="button" class="btn-add" onclick="addEducation()">+ Add Another Education</button>
@@ -121,27 +178,84 @@
             <h2>Skills & Strengths</h2>
             <div id="skillsContainer">
                 <div class="dynamic-item">
-                    <input type="text" placeholder="e.g. Communication, Technical Skill, etc.">
+                    <input type="text" class="skill-input" oninput="updatePreview()">
                 </div>
             </div>
             <button type="button" class="btn-add" onclick="addSkill()">+ Add Skill</button>
 
             <h2>Experience / Work Details</h2>
-            <textarea rows="2" placeholder="Write work details or 'Fresher'"></textarea>
+            <textarea id="inputExperience" rows="2" oninput="updatePreview()" placeholder=""></textarea>
 
             <button type="button" class="btn-download" onclick="window.print()">Download A4 PDF</button>
         </form>
+
+        <!-- Professional Resume Output Template for Preview & PDF -->
+        <div id="resumePreview" class="resume-preview">
+            <div class="res-header">
+                <h1 id="prevName">Your Name</h1>
+                <p>Phone: <span id="prevPhone">---</span> | Email: <span id="prevEmail">---</span></p>
+                <p id="prevAddress">Address details here</p>
+            </div>
+
+            <div class="res-section-title">Career Objective</div>
+            <div class="res-content" id="prevObjective">Write your career objective...</div>
+
+            <div class="res-section-title">Education</div>
+            <div class="res-content" id="prevEducation">
+                <ul><li>10th / Qualification details...</li></ul>
+            </div>
+
+            <div class="res-section-title">Skills & Strengths</div>
+            <div class="res-content" id="prevSkills">
+                <ul><li>Skills will appear here...</li></ul>
+            </div>
+
+            <div class="res-section-title">Experience</div>
+            <div class="res-content" id="prevExperience">Fresher / Work details...</div>
+        </div>
     </div>
 
     <script>
+        function updatePreview() {
+            // Personal info
+            document.getElementById('prevName').innerText = document.getElementById('inputName').value || 'Your Name';
+            document.getElementById('prevPhone').innerText = document.getElementById('inputPhone').value || '---';
+            document.getElementById('prevEmail').innerText = document.getElementById('inputEmail').value || '---';
+            document.getElementById('prevAddress').innerText = document.getElementById('inputAddress').value || '';
+            document.getElementById('prevObjective').innerText = document.getElementById('inputObjective').value || '';
+            document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value || '';
+
+            // Education list
+            const eduInputs = document.querySelectorAll('.edu-input');
+            let eduHTML = '<ul>';
+            eduInputs.forEach(input => {
+                if(input.value.trim() !== '') {
+                    eduHTML += `<li>${input.value}</li>`;
+                }
+            });
+            eduHTML += '</ul>';
+            document.getElementById('prevEducation').innerHTML = eduHTML;
+
+            // Skills list
+            const skillInputs = document.querySelectorAll('.skill-input');
+            let skillHTML = '<ul>';
+            skillInputs.forEach(input => {
+                if(input.value.trim() !== '') {
+                    skillHTML += `<li>${input.value}</li>`;
+                }
+            });
+            skillHTML += '</ul>';
+            document.getElementById('prevSkills').innerHTML = skillHTML;
+        }
+
         function addEducation() {
             const container = document.getElementById('educationContainer');
             const div = document.createElement('div');
             div.className = 'dynamic-item';
             div.innerHTML = `
-                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
                 <label>Qualification / School / College & Marks</label>
-                <input type="text" placeholder="e.g. Degree / Diploma - 75%">
+                <input type="text" class="edu-input" oninput="updatePreview()">
             `;
             container.appendChild(div);
         }
@@ -151,8 +265,8 @@
             const div = document.createElement('div');
             div.className = 'dynamic-item';
             div.innerHTML = `
-                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
-                <input type="text" placeholder="e.g. Skill name">
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
+                <input type="text" class="skill-input" oninput="updatePreview()">
             `;
             container.appendChild(div);
         }
