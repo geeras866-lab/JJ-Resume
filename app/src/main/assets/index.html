@@ -54,17 +54,17 @@
         }
         label {
             display: block;
-            margin-top: 10px;
-            font-size: 13px;
+            margin-top: 8px;
+            font-size: 12px;
             font-weight: 600;
             color: #cbd5e1;
         }
         input, textarea {
             width: 100%;
-            padding: 11px;
-            margin-top: 5px;
+            padding: 9px;
+            margin-top: 4px;
             border: 1px solid #475569;
-            border-radius: 8px;
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 13px;
             background: #0f172a;
@@ -83,6 +83,13 @@
             margin-top: 10px;
             position: relative;
         }
+        .row-group {
+            display: flex;
+            gap: 10px;
+        }
+        .row-group > div {
+            flex: 1;
+        }
         .btn-add {
             background-color: #10b981;
             color: white;
@@ -98,7 +105,7 @@
             background-color: #ef4444;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 8px;
             font-size: 11px;
             border-radius: 4px;
             cursor: pointer;
@@ -176,7 +183,7 @@
             padding-left: 18px;
         }
         .res-content li {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
         .step-indicator {
             text-align: center;
@@ -188,43 +195,23 @@
             letter-spacing: 1px;
         }
 
-        /* --- PRINT MEDIA RULES: HIDE FORM, SHOW ONLY RESUME --- */
+        /* --- PRINT MEDIA RULES --- */
         @media print {
-            body {
-                background: white !important;
-                color: black !important;
-                padding: 0 !important;
-            }
-            .container {
-                background: white !important;
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-            }
-            .container > *:not(#resumePreview) {
-                display: none !important;
-            }
-            .resume-preview {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-            }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .container { background: white !important; border: none !important; box-shadow: none !important; padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
+            .container > *:not(#resumePreview) { display: none !important; }
+            .resume-preview { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- AI Assistant Banner -->
         <div class="ai-banner">
             <span>✨</span>
             <div>
-                <strong>JJ AI Assistant (Universal Export)</strong><br>
-                <span style="font-size: 12px; opacity: 0.9;">Multi-step responsive resume generator.</span>
+                <strong>JJ AI Assistant (Native PDF Export)</strong><br>
+                <span style="font-size: 12px; opacity: 0.9;">100% Offline, Structured Education & Instant Download.</span>
             </div>
         </div>
 
@@ -251,7 +238,7 @@
                 </div>
             </div>
 
-            <!-- STEP 2: Objective & Education -->
+            <!-- STEP 2: Objective & Structured Education -->
             <div class="step-section" id="step2">
                 <h2 class="form-title">Career Objective</h2>
                 <textarea id="inputObjective" rows="3" oninput="updatePreview()"></textarea>
@@ -259,8 +246,22 @@
                 <h2 class="form-title">Education Details</h2>
                 <div id="educationContainer">
                     <div class="dynamic-item">
-                        <label>Qualification / School / College & Marks</label>
-                        <input type="text" class="edu-input" oninput="updatePreview()">
+                        <label>Degree / Qualification (e.g. 10th / SSC / Intermediate)</label>
+                        <input type="text" class="edu-degree" oninput="updatePreview()">
+                        
+                        <label style="margin-top:6px;">School / College Name</label>
+                        <input type="text" class="edu-school" oninput="updatePreview()">
+
+                        <div class="row-group">
+                            <div>
+                                <label style="margin-top:6px;">Marks / Percentage</label>
+                                <input type="text" class="edu-marks" oninput="updatePreview()">
+                            </div>
+                            <div>
+                                <label style="margin-top:6px;">Year Passed Out</label>
+                                <input type="text" class="edu-year" oninput="updatePreview()">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button type="button" class="btn-add" onclick="addEducation()">+ Add Another Qualification</button>
@@ -340,18 +341,26 @@
             document.getElementById('prevObjective').innerText = document.getElementById('inputObjective').value || '';
             document.getElementById('prevExperience').innerText = document.getElementById('inputExperience').value || '';
 
-            const eduInputs = document.querySelectorAll('.edu-input');
+            // Structured Education list
+            const eduItems = document.querySelectorAll('#educationContainer .dynamic-item');
             let eduHTML = '<ul>';
             let hasEdu = false;
-            eduInputs.forEach(input => {
-                if(input.value.trim() !== '') {
-                    eduHTML += `<li>${input.value}</li>`;
+            
+            eduItems.forEach(item => {
+                const degree = item.querySelector('.edu-degree').value.trim();
+                const school = item.querySelector('.edu-school').value.trim();
+                const marks = item.querySelector('.edu-marks').value.trim();
+                const year = item.querySelector('.edu-year').value.trim();
+
+                if(degree !== '' || school !== '' || marks !== '' || year !== '') {
+                    eduHTML += `<li><strong>${degree || 'Qualification'}</strong> - ${school || 'Institution'} | Marks: ${marks || '---'} | Year: ${year || '---'}</li>`;
                     hasEdu = true;
                 }
             });
             eduHTML += '</ul>';
             document.getElementById('prevEducation').innerHTML = hasEdu ? eduHTML : '<ul><li>---</li></ul>';
 
+            // Dynamic Skills list
             const skillInputs = document.querySelectorAll('.skill-input');
             let skillHTML = '<ul>';
             let hasSkill = false;
@@ -371,8 +380,22 @@
             div.className = 'dynamic-item';
             div.innerHTML = `
                 <button type="button" class="btn-remove" onclick="this.parentElement.remove(); updatePreview();">Remove</button>
-                <label>Qualification / School / College & Marks</label>
-                <input type="text" class="edu-input" oninput="updatePreview()">
+                <label>Degree / Qualification (e.g. 10th / SSC / Intermediate)</label>
+                <input type="text" class="edu-degree" oninput="updatePreview()">
+                
+                <label style="margin-top:6px;">School / College Name</label>
+                <input type="text" class="edu-school" oninput="updatePreview()">
+
+                <div class="row-group">
+                    <div>
+                        <label style="margin-top:6px;">Marks / Percentage</label>
+                        <input type="text" class="edu-marks" oninput="updatePreview()">
+                    </div>
+                    <div>
+                        <label style="margin-top:6px;">Year Passed Out</label>
+                        <input type="text" class="edu-year" oninput="updatePreview()">
+                    </div>
+                </div>
             `;
             container.appendChild(div);
         }
@@ -389,11 +412,105 @@
         }
 
         function exportPDF() {
-            try {
-                window.print();
-            } catch (err) {
-                alert("To save as PDF on mobile, tap browser menu (3 dots) -> Share -> Print.");
-            }
+            const v = id => document.getElementById(id).value.trim();
+            const W = 595, H = 842, M = 45, maxW = W - 2 * M;
+            const esc = s => s.replace(/[^\x20-\x7E]/g, '?').replace(/([\\()])/g, '\\$1');
+            const items = [];
+            const sec = t => items.push({ t: t.toUpperCase(), s: 12, b: 1, gap: 12, rule: 1 });
+
+            items.push({ t: (v('inputName') || 'YOUR NAME').toUpperCase(), s: 22, b: 1 });
+            items.push({ t: 'Phone: ' + (v('inputPhone') || '---') + ' | Email: ' + (v('inputEmail') || '---'), s: 10, gap: 4 });
+            items.push({ t: 'Address: ' + (v('inputAddress').replace(/\s+/g, ' ') || '---'), s: 10, rule: 1 });
+
+            sec('Career Objective');
+            items.push({ t: v('inputObjective') || '---', s: 11, gap: 4 });
+
+            sec('Education');
+            document.querySelectorAll('#educationContainer .dynamic-item').forEach(it => {
+                const g = c => it.querySelector(c).value.trim();
+                if (g('.edu-degree') || g('.edu-school') || g('.edu-marks') || g('.edu-year')) {
+                    const eduText = (g('.edu-degree') || 'Qualification') + ' - ' + (g('.edu-school') || 'Institution') +
+                        ' | Marks: ' + (g('.edu-marks') || '---') + ' | Year: ' + (g('.edu-year') || '---');
+                    items.push({ t: eduText, s: 11, bullet: 1, gap: 3 });
+                }
+            });
+
+            sec('Skills & Strengths');
+            document.querySelectorAll('.skill-input').forEach(i => {
+                if (i.value.trim()) items.push({ t: i.value.trim(), s: 11, bullet: 1, gap: 3 });
+            });
+
+            sec('Experience');
+            items.push({ t: v('inputExperience') || '---', s: 11, gap: 4 });
+
+            // Build pages
+            const pages = [];
+            let cur = '', y = H - M;
+            const newPage = () => { pages.push(cur); cur = ''; y = H - M; };
+
+            items.forEach(it => {
+                const cw = it.s * (it.b ? 0.56 : 0.52);
+                const indent = it.bullet ? 14 : 0;
+                const maxChars = Math.floor((maxW - indent) / cw);
+                const lines = [];
+                String(it.t).split('\n').forEach(par => {
+                    let line = '';
+                    par.split(' ').forEach(w => {
+                        if ((line + ' ' + w).trim().length > maxChars) { lines.push(line); line = w; }
+                        else line = (line + ' ' + w).trim();
+                    });
+                    lines.push(line);
+                });
+                y -= (it.gap || 0);
+                lines.forEach((ln, idx) => {
+                    const lh = it.s * 1.4;
+                    if (y - lh < M) newPage();
+                    y -= lh;
+                    if (it.bullet && idx === 0) {
+                        cur += `BT /F1 ${it.s} Tf ${M} ${y} Td (-) Tj ET\n`;
+                    }
+                    cur += `BT /${it.b ? 'F2' : 'F1'} ${it.s} Tf ${M + indent} ${y} Td (${esc(ln)}) Tj ET\n`;
+                });
+                if (it.rule) {
+                    y -= 3;
+                    cur += `0.5 w ${M} ${y} m ${W - M} ${y} l S\n`;
+                }
+            });
+            pages.push(cur);
+
+            // Assemble PDF objects
+            const n = pages.length;
+            const kids = pages.map((_, i) => `${5 + 2 * i} 0 R`).join(' ');
+            const objs = [
+                '<< /Type /Catalog /Pages 2 0 R >>',
+                `<< /Type /Pages /Kids [${kids}] /Count ${n} >>`,
+                '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+                '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'
+            ];
+            pages.forEach((c, i) => {
+                objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${6 + 2 * i} 0 R >>`);
+                objs.push(`<< /Length ${c.length} >>\nstream\n${c}endstream`);
+            });
+
+            let pdf = '%PDF-1.4\n';
+            const offs = [];
+            objs.forEach((o, i) => { offs.push(pdf.length); pdf += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+            const xref = pdf.length;
+            pdf += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`;
+            offs.forEach(o => { pdf += String(o).padStart(10, '0') + ' 00000 n \n'; });
+            pdf += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+
+            const bytes = new Uint8Array(pdf.length);
+            for (let i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 255;
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (v('inputName') || 'resume').replace(/\s+/g, '_') + '_Resume.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
         }
     </script>
 
