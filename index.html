@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ Resume Builder</title>
+    <!-- html2pdf library for offline PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --text: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 16px; }
+
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h2 { font-size: 1.1rem; color: var(--primary); margin: 15px 0 8px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
+        
+        .form-group { margin-bottom: 10px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; outline: none; }
+        input:focus, textarea:focus { border-color: var(--accent); }
+        textarea { height: 70px; resize: vertical; }
+
+        .btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn:hover { background: #1d4ed8; }
+
+        /* EXACT A4 SHEET STYLING FOR PDF EXPORT (No App Branding) */
+        #resume-preview {
+            display: none;
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            margin: 0 auto;
+            color: #000;
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+
+        .resume-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
+        .resume-header h1 { font-size: 22pt; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
+        .resume-header p { font-size: 10pt; color: #475569; margin-top: 4px; }
+
+        .section-title { font-size: 12pt; font-weight: bold; color: #0f172a; border-bottom: 1px solid #94a3b8; padding-bottom: 2px; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; }
+        
+        .edu-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        .edu-table th, .edu-table td { border: 1px solid #cbd5e1; padding: 6px 8px; font-size: 10pt; text-align: left; }
+        .edu-table th { background: #f1f5f9; color: #0f172a; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="form-container">
+        <h2>Personal Details</h2>
+        <div class="form-group"><label>Full Name</label><input type="text" id="name" placeholder="e.g. V. Swathi"></div>
+        <div class="form-group"><label>Father's Name / Guardian</label><input type="text" id="father" placeholder="e.g. V. Gopi Sai"></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="e.g. +91 9346128212"></div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="email" placeholder="e.g. example@gmail.com"></div>
+        <div class="form-group"><label>Address</label><input type="text" id="address" placeholder="e.g. Door No, Street, City, State - Pincode"></div>
+
+        <h2>Career Objective</h2>
+        <div class="form-group"><textarea id="objective" placeholder="Write career objective..."></textarea></div>
+
+        <h2>Education Details</h2>
+        <div class="form-group"><input type="text" id="edu1" placeholder="10th / SSC School & Marks %"></div>
+        <div class="form-group"><input type="text" id="edu2" placeholder="Intermediate College & Marks %"></div>
+        <div class="form-group"><input type="text" id="edu3" placeholder="Degree / Other (Optional)"></div>
+
+        <h2>Skills & Strengths</h2>
+        <div class="form-group"><input type="text" id="skills" placeholder="e.g. HTML, CSS, JavaScript, MS Office"></div>
+        
+        <h2>Experience</h2>
+        <div class="form-group"><input type="text" id="experience" placeholder="Work experience details or 'Fresher'"></div>
+
+        <button class="btn" onclick="generatePDFResume()">Download A4 PDF</button>
+    </div>
+
+    <!-- HIDDEN A4 TEMPLATE FOR PDF GENERATION -->
+    <div id="resume-preview">
+        <div class="resume-header">
+            <h1 id="out-name">YOUR NAME</h1>
+            <p><strong>Father's Name:</strong> <span id="out-father">-</span></p>
+            <p><strong>Phone:</strong> <span id="out-phone">-</span> | <strong>Email:</strong> <span id="out-email">-</span></p>
+            <p><strong>Address:</strong> <span id="out-address">-</span></p>
+        </div>
+
+        <div class="section-title">Career Objective</div>
+        <p id="out-objective">-</p>
+
+        <div class="section-title">Academic Qualifications</div>
+        <table class="edu-table">
+            <tr>
+                <th>Course / Qualification</th>
+                <th>Institution / Details</th>
+            </tr>
+            <tr>
+                <td>10th / SSC</td>
+                <td id="out-edu1">-</td>
+            </tr>
+            <tr>
+                <td>Intermediate</td>
+                <td id="out-edu2">-</td>
+            </tr>
+            <tr>
+                <td>Graduation / Other</td>
+                <td id="out-edu3">-</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Skills & Strengths</div>
+        <p id="out-skills">-</p>
+
+        <div class="section-title">Experience</div>
+        <p id="out-experience">-</p>
+    </div>
+
+    <script>
+        function generatePDFResume() {
+            // Assign values to preview container
+            document.getElementById('out-name').innerText = document.getElementById('name').value || 'YOUR NAME';
+            document.getElementById('out-father').innerText = document.getElementById('father').value || '-';
+            document.getElementById('out-phone').innerText = document.getElementById('phone').value || '-';
+            document.getElementById('out-email').innerText = document.getElementById('email').value || '-';
+            document.getElementById('out-address').innerText = document.getElementById('address').value || '-';
+            document.getElementById('out-objective').innerText = document.getElementById('objective').value || '-';
+            
+            document.getElementById('out-edu1').innerText = document.getElementById('edu1').value || '-';
+            document.getElementById('out-edu2').innerText = document.getElementById('edu2').value || '-';
+            document.getElementById('out-edu3').innerText = document.getElementById('edu3').value || '-';
+            
+            document.getElementById('out-skills').innerText = document.getElementById('skills').value || '-';
+            document.getElementById('out-experience').innerText = document.getElementById('experience').value || '-';
+
+            const element = document.getElementById('resume-preview');
+            element.style.display = 'block';
+
+            // Options for exact A4 PDF Generation without branding
+            const opt = {
+                margin:       0,
+                filename:     'Resume.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().from(element).set(opt).save().then(() => {
+                element.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
